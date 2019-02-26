@@ -1,0 +1,18 @@
+### OS X
+.DS_Store
+
+### Build
+dist/
+build/
+coverage/
+*.pyc
+
+### Yarn
+node_modules/
+yarn-error.log
+
+### Editors
+.vscode/
+
+### Generated code
+generated/
