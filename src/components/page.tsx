@@ -1,39 +1,59 @@
 import * as React from "react";
+import { DocsConfig, Page } from "../models";
 import { Link, Markdown } from "./markdown";
-import { PageModel } from "./pageModel";
 import { Sidebar } from "./sidebar";
 import { component } from "./style";
 
-interface IPageProps {
-    pages: PageModel[];
+interface PageBodyProps {
+    config: DocsConfig;
+    pages: Page[];
     pageIndex: number;
 }
 
-export const Page: React.FunctionComponent<IPageProps> = ({ pages, pageIndex }) => {
+export const PageBody: React.FunctionComponent<PageBodyProps> = ({ config, pages, pageIndex }) => {
     const page = pages[pageIndex];
-    const year = new Date().getFullYear();
     return (
         <Container>
-            <Sidebar pages={pages} selectedIndex={pageIndex} />
+            <Sidebar config={config} pages={pages} selectedIndex={pageIndex} />
             <Contents>
                 <Body>
                     <div id="top" />
                     <Markdown root={page.root} />
                     <EndMatter>
-                        <Link href="https://github.com/jscheiny/safe-units">Safe Units</Link> is developed by Jonah
-                        Scheinerman. Please <Link href="mailto:jonah@scheinerman.net">contact me</Link> if you have
-                        questions or concerns.
+                        FILL IN THE END MATTER SOMEHOW
                         <License>
-                            Safe Units is distributed under the{" "}
-                            <Link href="https://opensource.org/licenses/MIT">MIT open source license</Link>.
-                            <br />
-                            <br />
-                            Copyright © {year} by Jonah Scheinerman
+                            <LicenseText config={config} />
+                            <CopyrightText config={config} />
                         </License>
                     </EndMatter>
                 </Body>
             </Contents>
         </Container>
+    );
+};
+
+const LicenseText: React.FunctionComponent<{ config: DocsConfig }> = ({ config }) => {
+    const { license, projectName } = config;
+    if (license === undefined) {
+        return <></>;
+    }
+    return (
+        <div>
+            {projectName} is distributed under the <Link href={license.url}>{license.name}</Link>
+        </div>
+    );
+};
+
+const CopyrightText: React.FunctionComponent<{ config: DocsConfig }> = ({ config }) => {
+    const { copyrightName } = config;
+    if (copyrightName === undefined) {
+        return <></>;
+    }
+    const year = new Date().getFullYear();
+    return (
+        <div>
+            Copyright © {year} by {copyrightName}
+        </div>
     );
 };
 

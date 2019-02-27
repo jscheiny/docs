@@ -1,6 +1,6 @@
 {
     "name": "@jscheiny/docs",
-    "description": "Type-safe TypeScript units of measure",
+    "description": "Opinionated static docs generator",
     "version": "0.0.0",
     "license": "MIT",
     "homepage": "https://github.com/jscheiny/docs",
@@ -19,6 +19,7 @@
     "dependencies": {
         "commonmark": "^0.28.1",
         "highlight.js": "^9.15.2",
+        "io-ts": "^1.8.2",
         "node": "^11.10.0",
         "normalize.css": "^8.0.1",
         "react": "^16.8.3",

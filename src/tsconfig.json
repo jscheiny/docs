@@ -14,7 +14,7 @@
         "strict": true,
         "jsx": "react",
         "declaration": true,
-        "outDir": "./dist",
+        "outDir": "../dist",
         "lib": [
             "dom",
             "esnext",

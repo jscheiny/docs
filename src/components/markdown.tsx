@@ -1,14 +1,14 @@
 import { Node } from "commonmark";
 import { highlight } from "highlight.js";
 import * as React from "react";
-import { createNodeId } from "./markdownUtils";
+import { createNodeId } from "../common/markdownUtils";
 import { component } from "./style";
 
-interface IMarkdownProps {
+interface MarkdownProps {
     root: Node;
 }
 
-type MarkdownComponent = React.FunctionComponent<IMarkdownProps>;
+type MarkdownComponent = React.FunctionComponent<MarkdownProps>;
 
 export const Markdown: MarkdownComponent = ({ root }) => {
     switch (root.type) {

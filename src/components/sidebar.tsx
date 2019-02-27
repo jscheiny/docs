@@ -1,15 +1,16 @@
 import * as React from "react";
 import { classes, style } from "typestyle";
+import { DocsConfig, Page } from "../models";
 import { MarkdownChildren } from "./markdown";
-import { PageModel } from "./pageModel";
 import { component, styles } from "./style";
 
-interface ISidebarProps {
-    pages: PageModel[];
+interface SidebarProps {
+    config: DocsConfig;
+    pages: Page[];
     selectedIndex: number;
 }
 
-export const Sidebar: React.FunctionComponent<ISidebarProps> = ({ pages, selectedIndex }) => {
+export const Sidebar: React.FunctionComponent<SidebarProps> = ({ config, pages, selectedIndex }) => {
     const pageSections = pages[selectedIndex].sections
         .filter(({ level }) => level <= 3)
         .map(({ id, node, level }) => {
@@ -35,11 +36,12 @@ export const Sidebar: React.FunctionComponent<ISidebarProps> = ({ pages, selecte
         );
     });
 
+    const { url, text } = config.github;
     return (
         <Container>
             {links}
-            <PageLink className={homeLink} href="https://github.com/jscheiny/safe-units">
-                View on github
+            <PageLink className={homeLink} href={url}>
+                {text || "View on Github"}
             </PageLink>
         </Container>
     );
