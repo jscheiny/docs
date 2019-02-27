@@ -1,8 +1,8 @@
-import { writeFileSync } from "fs";
 import { join } from "path";
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 import { getStyles } from "typestyle";
+import { FS } from "../common/filesystem";
 import { PageBody } from "../components/page";
 import { DocsConfig, Page } from "../models";
 import { renderLinkedStyles } from "./stylesRenderer";
@@ -11,7 +11,7 @@ export function renderPages(pages: Page[], config: DocsConfig, stylesDir: string
     const linkedStyles = renderLinkedStyles(config, stylesDir);
     pages.forEach((page, index) => {
         const html = renderPage(pages, index, config, linkedStyles);
-        writeFileSync(join(config.outputDir, page.path), html);
+        FS.writeFile(join(config.outputDir, page.path), html);
     });
 }
 
@@ -22,8 +22,7 @@ function renderPage(pages: Page[], index: number, config: DocsConfig, linkedStyl
     return renderPageHtml(title, body, getStyles(), linkedStyles);
 }
 
-const renderPageHtml = (title: string, body: string, inlineStyles: string, linkedStyles: string) => `
-<!DOCTYPE html>
+const renderPageHtml = (title: string, body: string, inlineStyles: string, linkedStyles: string) => `<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />

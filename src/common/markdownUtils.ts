@@ -1,6 +1,6 @@
 import { Node, NodeWalker, NodeWalkingStep } from "commonmark";
 
-export function getNodeText(root: Node): string {
+export function getNodeText(root: Node) {
     let text = "";
     walkMarkdown(root, node => {
         if (node.literal) {
@@ -10,7 +10,7 @@ export function getNodeText(root: Node): string {
     return text;
 }
 
-export function walkMarkdown(root: Node, callback: (node: Node) => void): void {
+export function walkMarkdown(root: Node, callback: (node: Node) => void) {
     const walker = root.walker();
 
     while (true) {
@@ -25,7 +25,7 @@ export function walkMarkdown(root: Node, callback: (node: Node) => void): void {
     }
 }
 
-export function createNodeId(node: Node): string {
+export function createNodeId(node: Node) {
     return encodeURIComponent(
         getNodeText(node)
             .toLowerCase()

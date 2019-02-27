@@ -1,6 +1,7 @@
-import { copyFileSync, existsSync } from "fs";
 import { basename, join } from "path";
 import { Errors } from "../common/errors";
+import { FS } from "../common/filesystem";
+import { isPresent } from "../common/utils";
 import { DocsConfig } from "../models";
 
 export function renderLinkedStyles(config: DocsConfig, stylesDir: string) {
@@ -17,16 +18,12 @@ function getHighlightStyleSheetPath(config: DocsConfig) {
 }
 
 function renderLinkedStyleSheet(styleSheetPath: string, stylesDir: string): string | undefined {
-    if (!existsSync(styleSheetPath)) {
+    if (!FS.exists(styleSheetPath)) {
         Errors.register(`Could not find style sheet at ${styleSheetPath}`);
         return undefined;
     }
     const name = basename(styleSheetPath);
     const outPath = join(stylesDir, name);
-    copyFileSync(styleSheetPath, outPath);
+    FS.copyFile(styleSheetPath, outPath);
     return `<link rel="stylesheet" type="text/css" media="screen" href="styles/${name}" />`;
-}
-
-function isPresent<T>(value: T | null | undefined): value is T {
-    return value != null;
 }

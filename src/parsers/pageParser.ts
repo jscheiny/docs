@@ -1,26 +1,33 @@
 import { Node, Parser } from "commonmark";
-import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import { basename, extname, join } from "path";
 import { Errors } from "../common/errors";
+import { FS } from "../common/filesystem";
 import { createNodeId, getNodeText, nextStep, walkMarkdown } from "../common/markdownUtils";
+import { isPresent } from "../common/utils";
 import { DocsConfig, Page, PageSection } from "../models";
 
 export function parsePages(config: DocsConfig): Page[] | undefined {
     const { inputDir, pageOrder } = config;
-    if (!existsSync(inputDir)) {
+    if (!FS.exists(inputDir)) {
         Errors.register(`Input directory "${inputDir}" does not exist`);
         return undefined;
     }
 
-    if (!statSync(inputDir).isDirectory()) {
+    if (!FS.isDirectory(inputDir)) {
         Errors.register(`Input directory "${inputDir}" is not a directory`);
         return undefined;
     }
 
-    const pages = readdirSync(inputDir)
+    const paths = FS.readDir(inputDir);
+    if (paths === undefined) {
+        return undefined;
+    }
+
+    const pages = paths
         .filter(path => extname(path).toLowerCase() === ".md")
         .map(path => join(inputDir, path))
         .map(path => parsePage(path, config))
+        .filter(isPresent)
         .sort(orderBy(pageOrder));
 
     pages.forEach(page => parseErrors(page, pages));
@@ -28,9 +35,12 @@ export function parsePages(config: DocsConfig): Page[] | undefined {
     return pages;
 }
 
-function parsePage(sourcePath: string, config: DocsConfig): Page {
+function parsePage(sourcePath: string, config: DocsConfig): Page | undefined {
     const name = basename(sourcePath, ".md");
-    const source = readFileSync(sourcePath, "UTF8");
+    const source = FS.readFile(sourcePath);
+    if (source === undefined) {
+        return undefined;
+    }
     const root = markdownParser.parse(source);
     return {
         name,

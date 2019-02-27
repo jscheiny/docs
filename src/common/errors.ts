@@ -25,7 +25,7 @@ class ErrorsService {
         }
     }
 
-    public flush(): void {
+    public flush() {
         for (const error of this.errors) {
             printError(error);
         }
