@@ -1,15 +1,15 @@
+import * as commandLineArgs from "command-line-args";
 import { Errors } from "./common/errors";
 import { parseConfig, parsePages } from "./parsers";
 import { renderFileSystem, renderPages } from "./renderers";
 
-function buildDocs(args: string[]) {
-    if (args.length !== 1) {
-        Errors.register("Expected exactly 1 command line argument");
-        return;
-    }
+interface CommandLineArgs {
+    config: string;
+    dev: boolean;
+}
 
-    const configPath = args[0];
-    const config = parseConfig(configPath);
+function buildDocs(args: CommandLineArgs) {
+    const config = parseConfig(args.config);
     if (config === undefined) {
         return;
     }
@@ -24,7 +24,12 @@ function buildDocs(args: string[]) {
     renderPages(pages, config, fileSystem.stylesDir);
 }
 
-function runAsCLI(args: string[]) {
+function runAsCLI() {
+    const args = commandLineArgs([
+        { name: "config", alias: "c", type: String },
+        { name: "dev", type: Boolean },
+    ]) as CommandLineArgs;
+
     Errors.reset();
     buildDocs(args);
     Errors.flush();
@@ -33,4 +38,4 @@ function runAsCLI(args: string[]) {
     }
 }
 
-runAsCLI(process.argv.slice(2));
+runAsCLI();
