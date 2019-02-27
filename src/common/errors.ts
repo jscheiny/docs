@@ -1,4 +1,5 @@
 import { Node } from "commonmark";
+import { Page } from "../models/pageModel";
 
 class ErrorsService {
     private count: number = 0;
@@ -12,15 +13,15 @@ class ErrorsService {
     }
 
     public register(message: string): void;
-    public register(message: string, node: Node, path: string): void;
-    public register(message: string, node?: Node, path?: string) {
+    public register(message: string, node: Node, page: Page): void;
+    public register(message: string, node?: Node, page?: Page) {
         this.count += 1;
-        if (node === undefined || path === undefined) {
+        if (node === undefined || page === undefined) {
             this.errors.push(message);
-        } else if (!(path in this.sourcedErrors)) {
-            this.sourcedErrors[path] = [];
+        } else if (!(page.sourcePath in this.sourcedErrors)) {
+            this.sourcedErrors[page.sourcePath] = [{ node, message }];
         } else {
-            this.sourcedErrors[path].push({ node, message });
+            this.sourcedErrors[page.sourcePath].push({ node, message });
         }
     }
 

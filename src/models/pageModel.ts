@@ -5,6 +5,7 @@ export interface Page {
     root: Node;
     title: string;
     sections: PageSection[];
+    sourcePath: string;
     path: string;
 }
 

@@ -17,20 +17,25 @@ export function parsePages(config: DocsConfig): Page[] | undefined {
         return undefined;
     }
 
-    return readdirSync(inputDir)
+    const pages = readdirSync(inputDir)
         .filter(path => extname(path).toLowerCase() === ".md")
         .map(path => join(inputDir, path))
         .map(path => parsePage(path, config))
         .sort(orderBy(pageOrder));
+
+    pages.forEach(page => parseErrors(page, pages));
+
+    return pages;
 }
 
-function parsePage(path: string, config: DocsConfig): Page {
-    const name = basename(path, ".md");
-    const source = readFileSync(path, "UTF8");
+function parsePage(sourcePath: string, config: DocsConfig): Page {
+    const name = basename(sourcePath, ".md");
+    const source = readFileSync(sourcePath, "UTF8");
     const root = markdownParser.parse(source);
     return {
         name,
         root,
+        sourcePath,
         title: parseTitle(root, name, config),
         sections: parseSections(root),
         path: `${name}.html`,
@@ -98,4 +103,23 @@ function orderBy(pageOrder: string[] = []): (a: Page, b: Page) => number {
             return a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1;
         }
     };
+}
+
+function parseErrors(page: Page, pages: Page[]) {
+    walkMarkdown(page.root, node => {
+        if (node.type === "link" && node.destination && !isExternalDestination(node.destination)) {
+            const destPath = node.destination.split("#")[0];
+            if (!destPath) {
+                return;
+            }
+            const foundPage = pages.find(page => basename(page.path) === destPath);
+            if (!foundPage) {
+                Errors.register(`Could not find page "${destPath}"`, node, page);
+            }
+        }
+    });
+}
+
+function isExternalDestination(dest: string) {
+    return dest.startsWith("https://") || dest.startsWith("http://") || dest.startsWith("mailto:");
 }
